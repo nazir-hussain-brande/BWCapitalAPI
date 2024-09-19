@@ -21,16 +21,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Don't forget to add request header "Accept": "application/json"
-Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::post('/me', [AuthController::class, 'me']);
-});
+Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::group(['middleware' => 'api'], function () {
+Route::middleware('auth:api')->group(function () {
+
+    Route::group(['prefix' => 'auth'], function () {
+
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/refresh', [AuthController::class, 'refresh']);
+        Route::post('/me', [AuthController::class, 'me']);    
+    });
 
     Route::get('teams', [GeneralController::class, 'teamAgent']);
     Route::get('property-types', [GeneralController::class, 'propertyTypes']);
@@ -41,4 +42,27 @@ Route::group(['middleware' => 'api'], function () {
     Route::get('/properties/{id}', [PropertyController::class, 'show']);
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
+
 });
+
+// // Don't forget to add request header "Accept": "application/json"
+// Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
+
+//     Route::post('/login', [AuthController::class, 'login']);
+//     Route::post('/logout', [AuthController::class, 'logout']);
+//     Route::post('/refresh', [AuthController::class, 'refresh']);
+//     Route::post('/me', [AuthController::class, 'me']);
+// });
+
+// Route::group(['middleware' => 'api'], function () {
+
+//     Route::get('teams', [GeneralController::class, 'teamAgent']);
+//     Route::get('property-types', [GeneralController::class, 'propertyTypes']);
+//     Route::get('property-for', [GeneralController::class, 'propertyFor']);
+
+//     Route::get('/properties', [PropertyController::class, 'index']);
+//     Route::post('/properties', [PropertyController::class, 'store']);
+//     Route::get('/properties/{id}', [PropertyController::class, 'show']);
+//     Route::put('/properties/{id}', [PropertyController::class, 'update']);
+//     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
+// });

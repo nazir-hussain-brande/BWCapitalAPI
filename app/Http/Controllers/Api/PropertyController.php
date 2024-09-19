@@ -21,7 +21,8 @@ class PropertyController extends Controller
     {
         try {
             $properties = Property::all();
-            return response()->json($properties);
+
+            return response()->json(["properties" => $properties], Response::HTTP_OK);
         }
         catch (Exception $e) {
             
