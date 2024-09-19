@@ -8,7 +8,9 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PropertyImageUploadRequest;
 use App\Http\Requests\PropertyRequest;
+use App\Models\File;
 
 class PropertyController extends Controller
 {
@@ -129,6 +131,43 @@ class PropertyController extends Controller
             return response()->json(["message" => "Property deleted successfully"], Response::HTTP_OK);
         }
         catch (Exception $e) {
+
+            Log::error($e->getMessage());
+            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Upload the related images for property.
+     *
+     * @param  \Illuminate\Http\PropertyImageUploadRequest  $request
+     * @param  \App\Models\Property  $property
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function uploadImage(PropertyImageUploadRequest $request) : JsonResponse
+    {
+        try {
+            
+            Log::info($request->all());
+
+            $validated = $request->validated();
+    
+            $path = $request->file('image')->store('property_images/' . $request->input("ref_id"), "public");
+    
+            $file = File::updateOrCreate(
+                [
+                    'ref_id' => $validated['ref_id'],
+                    'ref_point' => $validated['ref_point'],
+                ],
+                [
+                    'name' => basename($path),
+                    'path' => $path,
+                    'alt_text' => $validated['alt_text'],
+                ]
+            );
+    
+            return response()->json(['message' => 'Image uploaded successfully', 'file' => $file]);
+        } catch (Exception $e) {
 
             Log::error($e->getMessage());
             return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
