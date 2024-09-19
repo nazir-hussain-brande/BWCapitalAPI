@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\PropertyController;
 
 /*
@@ -30,6 +31,10 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'api'], function () {
+
+    Route::get('teams', [GeneralController::class, 'teamAgent']);
+    Route::get('property-types', [GeneralController::class, 'propertyTypes']);
+    Route::get('property-for', [GeneralController::class, 'propertyFor']);
 
     Route::get('/properties', [PropertyController::class, 'index']);
     Route::post('/properties', [PropertyController::class, 'store']);
