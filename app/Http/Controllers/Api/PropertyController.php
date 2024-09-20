@@ -64,9 +64,16 @@ class PropertyController extends Controller
 
             $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
             if (!$propertyTypeId) {
+
+                $slug_en = strtolower(str_replace(' ', '_', $validated['property_type']['title_en']));
+                $slug_ar = strtolower(str_replace(' ', '_', $validated['property_type']['title_ar']));
+
                 $propertyTypeId = PropertyType::create([
                     'title_en' => $validated['property_type']['title_en'],
                     'title_ar' => $validated['property_type']['title_ar'],
+                    'slug_en' => $slug_en,
+                    'slug_ar' => $slug_ar,
+                    'status' => 1
                 ])->id;
             } else {
                 $propertyTypeId = $propertyTypeId->id;
@@ -74,9 +81,16 @@ class PropertyController extends Controller
 
             $propertyForId = PropertyFor::where('title_en', $validated['property_for']['title_en'])->first();
             if (!$propertyForId) {
+
+                $slug_en = strtolower(str_replace(' ', '_', $validated['property_for']['title_en']));
+                $slug_ar = strtolower(str_replace(' ', '_', $validated['property_for']['title_ar']));
+
                 $propertyForId = PropertyFor::create([
                     'title_en' => $validated['property_for']['title_en'],
                     'title_ar' => $validated['property_for']['title_ar'],
+                    'slug_en' => $slug_en,
+                    'slug_ar' => $slug_ar,
+                    'status' => 1
                 ])->id;
             } else {
                 $propertyForId = $propertyForId->id;
@@ -91,32 +105,24 @@ class PropertyController extends Controller
             $property = Property::create($propertyData);
 
             $propertyFeatureIds = [];
-            $propertyFeaturesData = [];
-
             foreach ($validated['property_features'] as $feature) {
-                $propertyFeature = PropertyFeature::where('title_en', $feature['title_en'])->first();
-                
+                $propertyFeature = PropertyFeature::where('title_en', $feature['title_en'])->first();   
                 if (!$propertyFeature) {
-                    $propertyFeaturesData[] = [
+                    $propertyFeature = PropertyFeature::create([
                         'title_en' => $feature['title_en'],
                         'title_ar' => $feature['title_ar'],
                         'description_en' => $feature['description_en'],
                         'description_ar' => $feature['description_ar'],
-                        'status' => $feature['status'],
-                        'created_at' => now()
-                    ];
+                        'status' => $feature['status']
+                    ]);
+                    $insertedIds = [$propertyFeature->id];
                 } else {
-                    $propertyFeatureIds[] = $propertyFeature->id;
+                    $insertedIds = [$propertyFeature->id];
                 }
-            }
-
-            if (!empty($propertyFeaturesData)) {
-                $insertedIds = PropertyFeature::insert($propertyFeaturesData);
-
                 $propertyFeatureIds = array_merge($propertyFeatureIds, $insertedIds);
             }
-
             $property->propertyFeatures()->attach($propertyFeatureIds);
+
 
             $locations = [];
             foreach ($validated['property_near_location'] as $location) {
@@ -174,30 +180,95 @@ class PropertyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Property  $property
      * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(int $id, PropertyRequest $request) : JsonResponse
+    */
+    public function update(int $id, PropertyRequest $request): JsonResponse
     {
+        DB::beginTransaction();
+        
         try {
-
             $validated = $request->validated();
-
-            $property = Property::find($id);
-            
-            if (!$property) {
-                return response()->json(["message" => "Property not found"], Response::HTTP_NOT_FOUND);
+    
+            $property = Property::findOrFail($id);
+    
+            $agentId = Team::where('title_en', $validated['agent_id']['title_en'])->first();
+            if (!$agentId) {
+                $agentId = Team::create([
+                    'title_en' => $validated['agent_id']['title_en'],
+                    'title_ar' => $validated['agent_id']['title_ar'],
+                ])->id;
+            } else {
+                $agentId = $agentId->id;
             }
-
-
-            $property->update($validated);
-
+    
+            $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
+            if (!$propertyTypeId) {
+                $propertyTypeId = PropertyType::create([
+                    'title_en' => $validated['property_type']['title_en'],
+                    'title_ar' => $validated['property_type']['title_ar'],
+                ])->id;
+            } else {
+                $propertyTypeId = $propertyTypeId->id;
+            }
+    
+            $propertyForId = PropertyFor::where('title_en', $validated['property_for']['title_en'])->first();
+            if (!$propertyForId) {
+                $propertyForId = PropertyFor::create([
+                    'title_en' => $validated['property_for']['title_en'],
+                    'title_ar' => $validated['property_for']['title_ar'],
+                ])->id;
+            } else {
+                $propertyForId = $propertyForId->id;
+            }
+    
+            $propertyData = array_merge($validated, [
+                'agent_id' => $agentId,
+                'property_type' => $propertyTypeId,
+                'property_for' => $propertyForId,
+            ]);
+    
+            $property->update($propertyData);
+    
+            $propertyFeatureIds = [];
+    
+            foreach ($validated['property_features'] as $feature) {
+                $propertyFeature = PropertyFeature::where('title_en', $feature['title_en'])->first();
+                if (!$propertyFeature) {
+                    $propertyFeature = PropertyFeature::create([
+                        'title_en' => $feature['title_en'],
+                        'title_ar' => $feature['title_ar'],
+                        'description_en' => $feature['description_en'],
+                        'description_ar' => $feature['description_ar'],
+                        'status' => $feature['status'],
+                    ]);
+                }
+                $propertyFeatureIds[] = $propertyFeature->id;
+            }
+    
+            $property->propertyFeatures()->sync($propertyFeatureIds);
+    
+            $locations = [];
+            foreach ($validated['property_near_location'] as $location) {
+                $locations[] = [
+                    'location_en' => $location['location_en'],
+                    'location_ar' => $location['location_ar'],
+                    'distance' => $location['distance'],
+                    'property_id' => $property->id,
+                    'created_at' => now(),
+                ];
+            }
+    
+            PropertyNearLocation::where('property_id', $property->id)->delete();
+            PropertyNearLocation::insert($locations);
+    
+            DB::commit();
             return response()->json(["property" => $property], Response::HTTP_OK);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
 
+            DB::rollBack();
             Log::error($e->getMessage());
             return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
+    }    
 
     /**
      * Remove the specified property from storage.
