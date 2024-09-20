@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyForController;
+use App\Http\Controllers\PropertyFeatureController;
 use App\Http\Controllers\Api\PropertyTypeController;
 
 /*
@@ -51,6 +52,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/property_types/{id}', [PropertyTypeController::class, 'show']);
     Route::put('/property_types/{id}', [PropertyTypeController::class, 'update']);
     Route::delete('/property_types/{id}', [PropertyTypeController::class, 'destroy']);
+
+    Route::get('/property_features', [PropertyFeatureController::class, 'index']);
+    Route::post('/property_features', [PropertyFeatureController::class, 'store']);
+    Route::get('/property_features/{id}', [PropertyFeatureController::class, 'show']);
+    Route::put('/property_features/{id}', [PropertyFeatureController::class, 'update']);
+    Route::delete('/property_features/{id}', [PropertyFeatureController::class, 'destroy']);
 
     Route::get('/properties', [PropertyController::class, 'index']);
     Route::post('/properties', [PropertyController::class, 'store']);

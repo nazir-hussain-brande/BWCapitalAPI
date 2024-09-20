@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PropertyForRequest extends FormRequest
+class PropertyFeatureRequest extends FormRequest
 {
     public function authorize()
     {
@@ -16,8 +16,8 @@ class PropertyForRequest extends FormRequest
         return [
             'title_en' => 'required|string|max:255',
             'title_ar' => 'required|string|max:255',
-            'slug_en' => 'required|string|max:255',
-            'slug_ar' => 'required|string|max:255',
+            'description_en' => 'required|string',
+            'description_ar' => 'required|string',
             'status' => 'required|integer',
         ];
     }
@@ -29,14 +29,14 @@ class PropertyForRequest extends FormRequest
         if ($id) {
             $validator->after(function ($validator) use ($id) {
                 $validator->setRules([
-                    'slug_en' => 'required|string|max:255|unique:property_for,slug_en,' . $id,
-                    'slug_ar' => 'required|string|max:255|unique:property_for,slug_ar,' . $id,
+                    'slug_en' => 'required|string|max:255|unique:property_features,slug_en,' . $id,
+                    'slug_ar' => 'required|string|max:255|unique:property_features,slug_ar,' . $id,
                 ]);
             });
         } else {
             $validator->setRules([
-                'slug_en' => 'required|string|max:255|unique:property_for,slug_en',
-                'slug_ar' => 'required|string|max:255|unique:property_for,slug_ar',
+                'slug_en' => 'required|string|max:255|unique:property_features,slug_en',
+                'slug_ar' => 'required|string|max:255|unique:property_features,slug_ar',
             ]);
         }
     }

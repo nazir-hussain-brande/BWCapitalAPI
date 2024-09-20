@@ -6,29 +6,38 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PropertyTypeRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    public function authorize()
     {
         return auth()->check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function rules()
     {
-        $id = $this->route('id');
-
         return [
             'title_en' => 'required|string|max:255',
             'title_ar' => 'required|string|max:255',
-            'slug_en' => 'required|string|max:255|unique:property_types,slug_en,' . $id,
-            'slug_ar' => 'required|string|max:255|unique:property_types,slug_ar,' . $id,
+            'slug_en' => 'required|string|max:255',
+            'slug_ar' => 'required|string|max:255',
             'status' => 'required|integer',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $id = $this->route('id');
+
+        if ($id) {
+            $validator->after(function ($validator) use ($id) {
+                $validator->setRules([
+                    'slug_en' => 'required|string|max:255|unique:property_types,slug_en,' . $id,
+                    'slug_ar' => 'required|string|max:255|unique:property_types,slug_ar,' . $id,
+                ]);
+            });
+        } else {
+            $validator->setRules([
+                'slug_en' => 'required|string|max:255|unique:property_types,slug_en',
+                'slug_ar' => 'required|string|max:255|unique:property_types,slug_ar',
+            ]);
+        }
     }
 }
