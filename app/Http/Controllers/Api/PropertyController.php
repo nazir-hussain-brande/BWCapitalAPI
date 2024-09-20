@@ -29,7 +29,7 @@ class PropertyController extends Controller
         catch (Exception $e) {
             
             Log::error($e->getMessage());
-            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -52,7 +52,7 @@ class PropertyController extends Controller
         catch (Exception $e) {
 
             Log::error($e->getMessage());
-            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -76,7 +76,7 @@ class PropertyController extends Controller
         catch (Exception $e) {
 
             Log::error($e->getMessage());
-            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -107,7 +107,7 @@ class PropertyController extends Controller
         catch (Exception $e) {
 
             Log::error($e->getMessage());
-            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -133,7 +133,7 @@ class PropertyController extends Controller
         catch (Exception $e) {
 
             Log::error($e->getMessage());
-            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -170,7 +170,7 @@ class PropertyController extends Controller
         } catch (Exception $e) {
 
             Log::error($e->getMessage());
-            return response()->json(["error" => "Something went wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
