@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use Exception;
+use App\Models\File;
 use App\Models\Property;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PropertyImageUploadRequest;
 use App\Http\Requests\PropertyRequest;
-use App\Models\File;
+use App\Http\Requests\PropertyImageUploadRequest;
 
 class PropertyController extends Controller
 {
