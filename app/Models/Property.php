@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Property extends Model
@@ -44,4 +46,21 @@ class Property extends Model
         'size' => 'double',
         'status' => 'integer',
     ];
+
+    protected $dates = [
+        'deleted_at',
+    ];
+
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
+
+    public function nearLocations() : HasMany
+    {
+        return $this->hasMany(PropertyNearLocation::class, 'property_id');
+    }
+
+    public function propertyType(): BelongsTo
+    {
+        return $this->belongsTo(PropertyType::class, 'property_type');
+    }
 }

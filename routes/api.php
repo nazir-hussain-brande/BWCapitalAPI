@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyForController;
@@ -37,9 +38,11 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/me', [AuthController::class, 'me']);    
     });
 
+    /*
     Route::get('teams', [GeneralController::class, 'teamAgent']);
     Route::get('property-types', [GeneralController::class, 'propertyTypes']);
     Route::get('property-for', [GeneralController::class, 'propertyFor']);
+    */
 
     Route::get('/property_for', [PropertyForController::class, 'index']);
     Route::post('/property_for', [PropertyForController::class, 'store']);
@@ -58,6 +61,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/property_features/{id}', [PropertyFeatureController::class, 'show']);
     Route::put('/property_features/{id}', [PropertyFeatureController::class, 'update']);
     Route::delete('/property_features/{id}', [PropertyFeatureController::class, 'destroy']);
+
+    Route::get('/teams', [TeamController::class, 'index']);
+    Route::post('/teams', [TeamController::class, 'store']);
+    Route::get('/teams/{id}', [TeamController::class, 'show']);
+    Route::put('/teams/{id}', [TeamController::class, 'update']);
+    Route::delete('/teams/{id}', [TeamController::class, 'destroy']);
 
     Route::get('/properties', [PropertyController::class, 'index']);
     Route::post('/properties', [PropertyController::class, 'store']);
