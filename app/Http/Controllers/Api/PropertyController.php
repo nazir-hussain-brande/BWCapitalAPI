@@ -17,6 +17,7 @@ use App\Models\PropertyNearLocation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PropertyRequest;
 use App\Http\Requests\PropertyImageUploadRequest;
+use App\Models\PropertyFeatureAll;
 
 class PropertyController extends Controller
 {
@@ -302,23 +303,32 @@ class PropertyController extends Controller
      */
     public function destroy(int $id) : JsonResponse
     {
+        DB::beginTransaction();
+    
         try {
             $property = Property::find($id);
-
+    
             if (!$property) {
                 return response()->json(["message" => "Property not found"], Response::HTTP_NOT_FOUND);
             }
     
+            PropertyFeatureAll::where('property_id', $property->id)->update(['property_id' => 0]);
+            PropertyNearLocation::where('property_id', $property->id)->update(['property_id' => 0]);
+    
             $property->delete();
     
+            DB::commit();
+            
             return response()->json(["message" => "Property deleted successfully"], Response::HTTP_OK);
         }
         catch (Exception $e) {
-
+            
+            DB::rollBack();
             Log::error($e->getMessage());
             return response()->json(["error" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 
     /**
      * Upload the related images for property.
