@@ -52,6 +52,9 @@ class PropertyController extends Controller
         try {
             $validated = $request->validated();
 
+            $slug_en = strtolower(str_replace(' ', '_', $validated['title_en']));
+            $slug_ar = strtolower(str_replace(' ', '_', $validated['title_ar']));
+
             $agentId = Team::where('title_en', $validated['agent_id']['title_en'])->first();
             if (!$agentId) {
                 $agentId = Team::create([
@@ -97,13 +100,16 @@ class PropertyController extends Controller
             }
 
             $propertyData = array_merge($validated, [
+                'slug_en'       => $slug_en,
+                'slug_ar'       => $slug_ar,
                 'agent_id'      => $agentId,
                 'property_type' => $propertyTypeId,
-                'property_for'  => $propertyForId,
+                'property_for'  => $propertyForId
             ]);
 
             $property = Property::create($propertyData);
 
+            // Handle property features
             $propertyFeatureIds = [];
             foreach ($validated['property_features'] as $feature) {
                 $propertyFeature = PropertyFeature::where('title_en', $feature['title_en'])->first();   
@@ -123,7 +129,7 @@ class PropertyController extends Controller
             }
             $property->propertyFeatures()->attach($propertyFeatureIds);
 
-
+            // Handle property near locations
             $locations = [];
             foreach ($validated['property_near_location'] as $location) {
                 $locations[] = [
@@ -187,6 +193,9 @@ class PropertyController extends Controller
         
         try {
             $validated = $request->validated();
+
+            $slug_en = strtolower(str_replace(' ', '_', $validated['title_en']));
+            $slug_ar = strtolower(str_replace(' ', '_', $validated['title_ar']));
     
             $property = Property::findOrFail($id);
     
@@ -202,9 +211,16 @@ class PropertyController extends Controller
     
             $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
             if (!$propertyTypeId) {
+
+                $slug_en = strtolower(str_replace(' ', '_', $validated['property_type']['title_en']));
+                $slug_ar = strtolower(str_replace(' ', '_', $validated['property_type']['title_ar']));
+
                 $propertyTypeId = PropertyType::create([
                     'title_en' => $validated['property_type']['title_en'],
                     'title_ar' => $validated['property_type']['title_ar'],
+                    'slug_en' => $slug_en,
+                    'slug_ar' => $slug_ar,
+                    'status' => 1
                 ])->id;
             } else {
                 $propertyTypeId = $propertyTypeId->id;
@@ -224,12 +240,15 @@ class PropertyController extends Controller
                 'agent_id' => $agentId,
                 'property_type' => $propertyTypeId,
                 'property_for' => $propertyForId,
+                'slug_en' => $slug_en,
+                'slug_ar' => $slug_ar,
             ]);
     
             $property->update($propertyData);
     
+            // Handle property features
             $propertyFeatureIds = [];
-    
+
             foreach ($validated['property_features'] as $feature) {
                 $propertyFeature = PropertyFeature::where('title_en', $feature['title_en'])->first();
                 if (!$propertyFeature) {
@@ -238,14 +257,19 @@ class PropertyController extends Controller
                         'title_ar' => $feature['title_ar'],
                         'description_en' => $feature['description_en'],
                         'description_ar' => $feature['description_ar'],
-                        'status' => $feature['status'],
+                        'status' => $feature['status']
                     ]);
+                    $insertedIds = [$propertyFeature->id];
+                } else {
+                    $insertedIds = [$propertyFeature->id];
                 }
-                $propertyFeatureIds[] = $propertyFeature->id;
+
+                $propertyFeatureIds = array_merge($propertyFeatureIds, $insertedIds);
             }
-    
+
             $property->propertyFeatures()->sync($propertyFeatureIds);
     
+            // Handle property near locations
             $locations = [];
             foreach ($validated['property_near_location'] as $location) {
                 $locations[] = [
