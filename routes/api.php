@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyForController;
 use App\Http\Controllers\PropertyFeatureController;
 use App\Http\Controllers\Api\PropertyTypeController;
+use App\Http\Controllers\Api\PropertyNearLocationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -74,5 +76,11 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
     Route::post('/properties/image-upload', [PropertyController::class, 'uploadImage']);
+
+    Route::get('/property-near-locations', [PropertyNearLocationController::class, 'index']);
+    Route::post('/property-near-locations', [PropertyNearLocationController::class, 'store']);
+    Route::get('/property-near-locations/{id}', [PropertyNearLocationController::class, 'show']);
+    Route::put('/property-near-locations/{id}', [PropertyNearLocationController::class, 'update']);
+    Route::delete('/property-near-locations/{id}', [PropertyNearLocationController::class, 'destroy']);
 
 });

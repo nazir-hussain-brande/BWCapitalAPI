@@ -63,4 +63,14 @@ class Property extends Model
     {
         return $this->belongsTo(PropertyType::class, 'property_type');
     }
+
+    public function propertyFor(): BelongsTo
+    {
+        return $this->belongsTo(PropertyFor::class, 'property_for');
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'agent_id');
+    }
 }
