@@ -7,8 +7,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\PropertyFeatureController;
 use App\Http\Controllers\Api\PropertyForController;
-use App\Http\Controllers\PropertyFeatureController;
 use App\Http\Controllers\Api\PropertyTypeController;
 use App\Http\Controllers\Api\PropertyNearLocationController;
 
