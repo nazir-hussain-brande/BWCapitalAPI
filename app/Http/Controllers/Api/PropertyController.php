@@ -12,12 +12,12 @@ use Illuminate\Http\Response;
 use App\Models\PropertyFeature;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Models\PropertyFeatureAll;
 use Illuminate\Support\Facades\Log;
 use App\Models\PropertyNearLocation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PropertyRequest;
 use App\Http\Requests\PropertyImageUploadRequest;
-use App\Models\PropertyFeatureAll;
 
 class PropertyController extends Controller
 {
@@ -43,7 +43,7 @@ class PropertyController extends Controller
     /**
      * Store a newly created property in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\PropertyRequest  $request
      * @return \Illuminate\Http\JsonResponse
     */
     public function store(PropertyRequest $request): JsonResponse
@@ -184,7 +184,7 @@ class PropertyController extends Controller
     /**
      * Update the specified property in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\PropertyRequest  $request
      * @param  \App\Models\Property  $property
      * @return \Illuminate\Http\JsonResponse
     */

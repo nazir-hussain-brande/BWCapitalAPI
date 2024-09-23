@@ -4,12 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\PropertyController;
-use App\Http\Controllers\Api\PropertyFeatureController;
 use App\Http\Controllers\Api\PropertyForController;
 use App\Http\Controllers\Api\PropertyTypeController;
+use App\Http\Controllers\Api\PropertyFeatureController;
 use App\Http\Controllers\Api\PropertyNearLocationController;
 
 
@@ -82,5 +83,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/property-near-locations/{id}', [PropertyNearLocationController::class, 'show']);
     Route::put('/property-near-locations/{id}', [PropertyNearLocationController::class, 'update']);
     Route::delete('/property-near-locations/{id}', [PropertyNearLocationController::class, 'destroy']);
+
+    Route::post('/files', [FileController::class, 'store']);
+    Route::get('/files', [FileController::class, 'index']);
+    Route::get('/files/{id}', [FileController::class, 'show']);
+    Route::put('/files/{id}', [FileController::class, 'update']);
+    Route::delete('/files/{id}', [FileController::class, 'destroy']);
 
 });
