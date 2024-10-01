@@ -84,10 +84,12 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/property-near-locations/{id}', [PropertyNearLocationController::class, 'update']);
     Route::delete('/property-near-locations/{id}', [PropertyNearLocationController::class, 'destroy']);
 
+    /*
     Route::post('/files', [FileController::class, 'store']);
     Route::get('/files', [FileController::class, 'index']);
     Route::get('/files/{id}', [FileController::class, 'show']);
     Route::put('/files/{id}', [FileController::class, 'update']);
     Route::delete('/files/{id}', [FileController::class, 'destroy']);
+    */
 
 });
