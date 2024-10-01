@@ -18,6 +18,9 @@ use App\Models\PropertyNearLocation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PropertyRequest;
 use App\Http\Requests\PropertyImageUploadRequest;
+use Error;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
 {
@@ -340,24 +343,32 @@ class PropertyController extends Controller
     public function uploadImage(PropertyImageUploadRequest $request) : JsonResponse
     {
         try {
-            
-            Log::info($request->all());
+
+            $file = File::where("ref_id", $request->input("ref_id"))
+                        ->where("ref_point", $request->input("ref_point"))
+                        ->first();
+
+            if ($file) {
+                Storage::disk('public')->delete($file->path);
+            }
+
+            $path = "property_images/". $request->input("ref_id"). "/" .$request->input("ref_point");
+            $imgPath = $request->file('image')->store($path, "public");
 
             $validated = $request->validated();
-    
-            $path = $request->file('image')->store('property_images/' . $request->input("ref_id"), "public");
-    
             $file = File::updateOrCreate(
                 [
                     'ref_id' => $validated['ref_id'],
                     'ref_point' => $validated['ref_point'],
                 ],
                 [
-                    'name' => basename($path),
-                    'path' => $path,
+                    'name' => basename($imgPath),
+                    'path' => $imgPath,
                     'alt_text' => $validated['alt_text'],
                 ]
             );
+
+            Log::info($file->toArray());
     
             return response()->json(['message' => 'Image uploaded successfully', 'file' => $file]);
         } catch (Exception $e) {
