@@ -55,6 +55,11 @@ class Property extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
+    public function files() : HasMany
+    {
+        return $this->hasMany(File::class, 'ref_id');
+    }
+
     public function nearLocations() : HasMany
     {
         return $this->hasMany(PropertyNearLocation::class, 'property_id');

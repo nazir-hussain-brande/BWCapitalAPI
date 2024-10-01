@@ -17,10 +17,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\PropertyNearLocation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PropertyRequest;
-use App\Http\Requests\PropertyImageUploadRequest;
-use Error;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\PropertyImageUploadRequest;
 
 class PropertyController extends Controller
 {
@@ -32,7 +30,7 @@ class PropertyController extends Controller
     public function index()
     {
         try {
-            $properties = Property::all();
+            $properties = Property::with("files")->get();
 
             return response()->json(["properties" => $properties], Response::HTTP_OK);
         }
@@ -169,7 +167,7 @@ class PropertyController extends Controller
     public function show(int $id) : JsonResponse
     {
         try {
-            $property = Property::find($id);
+            $property = Property::whereId($id)->with("files")->first();
 
             if (!$property) {
                 return response()->json(["message" => "Property not found"], Response::HTTP_NOT_FOUND);
