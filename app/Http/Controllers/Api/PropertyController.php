@@ -30,7 +30,12 @@ class PropertyController extends Controller
     public function index()
     {
         try {
-            $properties = Property::with("files")->get();
+            $properties = Property::with([
+                "files" => function ($q) {
+                    return $q->whereNot("ref_point", "news_main_image")
+                                ->whereNot("ref_point", "blogs_main_image");
+                }
+            ])->get();
 
             return response()->json(["properties" => $properties], Response::HTTP_OK);
         }
@@ -167,7 +172,12 @@ class PropertyController extends Controller
     public function show(int $id) : JsonResponse
     {
         try {
-            $property = Property::whereId($id)->with("files")->first();
+            $property = Property::whereId($id)->with([
+                "files" => function ($q) {
+                    return $q->whereNot("ref_point", "news_main_image")
+                                ->whereNot("ref_point", "blogs_main_image");
+                }
+            ])->first();
 
             if (!$property) {
                 return response()->json(["message" => "Property not found"], Response::HTTP_NOT_FOUND);
