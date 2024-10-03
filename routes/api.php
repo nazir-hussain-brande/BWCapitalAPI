@@ -76,7 +76,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/properties/{id}', [PropertyController::class, 'show']);
     Route::put('/properties/{id}', [PropertyController::class, 'update']);
     Route::delete('/properties/{id}', [PropertyController::class, 'destroy']);
-    Route::post('/properties/image-upload', [PropertyController::class, 'uploadImage']);
+    // Route::post('/properties/image-upload', [PropertyController::class, 'uploadImage']);
 
     Route::get('/property-near-locations', [PropertyNearLocationController::class, 'index']);
     Route::post('/property-near-locations', [PropertyNearLocationController::class, 'store']);
