@@ -57,6 +57,7 @@ class PropertyController extends Controller
         DB::beginTransaction();
         
         try {
+
             $validated = $request->validated();
 
             $slug_en = strtolower(str_replace(' ', '_', $validated['title_en']));
@@ -115,6 +116,41 @@ class PropertyController extends Controller
             ]);
 
             $property = Property::create($propertyData);
+
+            $mainImages =  [
+                [
+                    "name"      => basename($validated["property_main_image"]),
+                    "path"      => $validated["property_main_image"],
+                    "ref_id"    => $property->id,
+                    "ref_point" => "property_main_image",
+                    "from_api"  => 1,
+                    "created_at" => now()
+                ],
+                [
+                    "name"      => basename($validated["property_broucher"]),
+                    "path"      => $validated["property_broucher"],
+                    "ref_id"    => $property->id,
+                    "ref_point" => "property_broucher",
+                    "from_api"  => 1,
+                    "created_at" => now()
+                ]
+            ];            
+
+            $mainGallery = [];
+            foreach ($validated["property_main_gallery"] as $link) {
+                $mainGallery[] = [
+                    "name"      => basename($link),
+                    "path"      => $link,
+                    "ref_id"    => $property->id,
+                    "ref_point" => "property_main_gallery",
+                    "from_api"  => 1,
+                    "created_at" => now()
+                ];
+            }
+
+            $files = array_merge($mainImages, $mainGallery);
+            File::insert($files);
+            
 
             // Handle property features
             $propertyFeatureIds = [];

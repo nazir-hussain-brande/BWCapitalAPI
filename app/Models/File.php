@@ -19,6 +19,7 @@ class File extends Model
         'ref_id',
         'ref_point',
         'alt_text',
+        'from_api',
     ];
 
     protected $dates = [
