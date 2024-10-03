@@ -293,6 +293,71 @@ class PropertyController extends Controller
             ]);
     
             $property->update($propertyData);
+
+            // Handle file urls
+            $existingFiles = File::where('ref_id', $property->id)->get();
+
+            $existingFilesByRefPoint = $existingFiles->keyBy('ref_point');
+
+            $mainImages = [
+                [
+                    "name" => basename($validated["property_main_image"]),
+                    "path" => $validated["property_main_image"],
+                    "ref_id" => $property->id,
+                    "ref_point" => "property_main_image",
+                    "from_api" => 1,
+                    "created_at" => now()
+                ],
+                [
+                    "name" => basename($validated["property_broucher"]),
+                    "path" => $validated["property_broucher"],
+                    "ref_id" => $property->id,
+                    "ref_point" => "property_broucher",
+                    "from_api" => 1,
+                    "created_at" => now()
+                ]
+            ];
+
+            foreach ($mainImages as $image) {
+                if (isset($existingFilesByRefPoint[$image['ref_point']])) {
+                    $existingFilesByRefPoint[$image['ref_point']]->update([
+                        'name' => $image['name'],
+                        'path' => $image['path'],
+                        'updated_at' => now(),
+                    ]);
+                } else {
+                    File::create($image);
+                }
+            }
+
+            $mainGallery = [];
+            foreach ($validated["property_main_gallery"] as $link) {
+                $mainGallery[] = [
+                    "name" => basename($link),
+                    "path" => $link,
+                    "ref_id" => $property->id,
+                    "ref_point" => "property_main_gallery",
+                    "from_api" => 1,
+                    "created_at" => now()
+                ];
+            }
+
+            foreach ($mainGallery as $galleryImage) {
+                if (!$existingFiles->where('path', $galleryImage['path'])->count()) {
+                    File::create($galleryImage);
+                }
+            }
+
+            $existingGalleryPaths = $existingFiles->where('ref_point', 'property_main_gallery')->pluck('path')->toArray();
+            $newGalleryPaths = array_column($mainGallery, 'path');
+            $filesToRemove = array_diff($existingGalleryPaths, $newGalleryPaths);
+            
+            foreach ($filesToRemove as $filePath) {
+                File::where('ref_id', $property->id)
+                    ->where('ref_point', 'property_main_gallery')
+                    ->where('path', $filePath)
+                    ->delete();
+            }
     
             // Handle property features
             $propertyFeatureIds = [];
