@@ -29,12 +29,14 @@ class File extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
+    /*
     protected $appends = ['full_path'];
 
     public function getFullPathAttribute()
     {
         return $this->path ? asset('storage/' . $this->path) : null;
     }
+    */
 
     public function property() : BelongsTo
     {

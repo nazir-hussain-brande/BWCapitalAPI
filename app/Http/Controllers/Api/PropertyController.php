@@ -33,7 +33,8 @@ class PropertyController extends Controller
             $properties = Property::with([
                 "files" => function ($q) {
                     return $q->whereNot("ref_point", "news_main_image")
-                                ->whereNot("ref_point", "blogs_main_image");
+                            ->whereNot("ref_point", "blogs_main_image")
+                            ->where("from_api", 1);
                 }
             ])->get();
 
@@ -211,7 +212,8 @@ class PropertyController extends Controller
             $property = Property::whereId($id)->with([
                 "files" => function ($q) {
                     return $q->whereNot("ref_point", "news_main_image")
-                                ->whereNot("ref_point", "blogs_main_image");
+                            ->whereNot("ref_point", "blogs_main_image")
+                            ->where("from_api", 1);
                 }
             ])->first();
 
