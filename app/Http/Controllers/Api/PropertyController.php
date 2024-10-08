@@ -74,6 +74,19 @@ class PropertyController extends Controller
                 $agentId = $agentId->id;
             }
 
+            File::updateOrCreate(
+                [
+                    "ref_id" => $agentId,
+                    "ref_point" => 'main_image'
+                ],
+                [
+                    "name"  => basename($validated['agent_id']['main_image']),
+                    "path"  => $validated['agent_id']['main_image'],
+                    "from_api"  => 1,
+                    "created_at" => now()
+                ]
+            );
+
             $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
             if (!$propertyTypeId) {
 
@@ -170,6 +183,19 @@ class PropertyController extends Controller
                     $insertedIds = [$propertyFeature->id];
                 }
                 $propertyFeatureIds = array_merge($propertyFeatureIds, $insertedIds);
+
+                File::updateOrCreate(
+                    [
+                        "ref_id" => $propertyFeature->id,
+                        "ref_point" => 'feature_image'
+                    ],
+                    [
+                        "name"  => basename($feature['feature_image']),
+                        "path"  => $feature['feature_image'],
+                        "from_api"  => 1,
+                        "created_at" => now()
+                    ]
+                );
             }
             $property->propertyFeatures()->attach($propertyFeatureIds);
 
@@ -189,7 +215,12 @@ class PropertyController extends Controller
 
             DB::commit();
 
-            return response()->json(["property" => $property], Response::HTTP_CREATED);
+            $response = [
+                "url_en" => url('/property/' . $property->slug_en),
+                "url_ar" => url('/property/' . $property->slug_ar)
+            ];            
+
+            return response()->json($response, Response::HTTP_CREATED);
         } catch (Exception $e) {
 
             DB::rollBack();
@@ -258,6 +289,19 @@ class PropertyController extends Controller
             } else {
                 $agentId = $agentId->id;
             }
+
+            File::updateOrCreate(
+                [
+                    "ref_id" => $agentId,
+                    "ref_point" => 'main_image'
+                ],
+                [
+                    "name"  => basename($validated['agent_id']['main_image']),
+                    "path"  => $validated['agent_id']['main_image'],
+                    "from_api"  => 1,
+                    "created_at" => now()
+                ]
+            );
     
             $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
             if (!$propertyTypeId) {
@@ -380,6 +424,19 @@ class PropertyController extends Controller
                 }
 
                 $propertyFeatureIds = array_merge($propertyFeatureIds, $insertedIds);
+
+                File::updateOrCreate(
+                    [
+                        "ref_id" => $propertyFeature->id,
+                        "ref_point" => 'feature_image'
+                    ],
+                    [
+                        "name"  => basename($feature['feature_image']),
+                        "path"  => $feature['feature_image'],
+                        "from_api"  => 1,
+                        "created_at" => now()
+                    ]
+                );
             }
 
             $property->propertyFeatures()->sync($propertyFeatureIds);
@@ -400,7 +457,13 @@ class PropertyController extends Controller
             PropertyNearLocation::insert($locations);
     
             DB::commit();
-            return response()->json(["property" => $property], Response::HTTP_OK);
+
+            $response = [
+                "url_en" => url('/property/' . $property->slug_en),
+                "url_ar" => url('/property/' . $property->slug_ar)
+            ];            
+
+            return response()->json($response, Response::HTTP_OK);
         } catch (Exception $e) {
 
             DB::rollBack();

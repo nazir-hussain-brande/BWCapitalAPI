@@ -29,6 +29,7 @@ class PropertyRequest extends FormRequest
             'agent_id' => 'required|array',
             'agent_id.title_en' => 'required|string|max:255',
             'agent_id.title_ar' => 'required|string|max:255',
+            'agent_id.main_image' => 'required|url|max:255',
             'property_type' => 'required|array',
             'property_type.title_en' => 'required|string|max:255',
             'property_type.title_ar' => 'required|string|max:255',
@@ -37,14 +38,15 @@ class PropertyRequest extends FormRequest
             'property_for.title_ar' => 'required|string|max:255',
             'property_main_image' => 'required|url|max:255',
             'property_broucher' => 'nullable|url|max:255',
-            'property_main_gallery' => 'nullable|array',
-            'property_main_gallery.*' => 'nullable|url|max:255',
+            'property_main_gallery' => 'required|array|min:3',
+            'property_main_gallery.*' => 'required|url|max:255',
             'property_features' => 'required|array',
             'property_features.*.title_en' => 'required|string|max:255',
             'property_features.*.title_ar' => 'required|string|max:255',
             'property_features.*.description_en' => 'required|string|max:255',
             'property_features.*.description_ar' => 'required|string|max:255',
             'property_features.*.status' => 'required|integer',
+            'property_features.*.feature_image' => 'required|url|max:255',
             'property_near_location' => 'required|array',
             'property_near_location.*.location_en' => 'required|string|max:255',
             'property_near_location.*.location_ar' => 'required|string|max:255',
@@ -59,3 +61,4 @@ class PropertyRequest extends FormRequest
         ];
     }
 }
+
