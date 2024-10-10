@@ -468,10 +468,12 @@ class PropertyController extends Controller
     
             DB::commit();
 
+            /*
             $response = [
                 "url_en" => url('/property/' . $property->slug_en),
                 "url_ar" => url('/property/' . $property->slug_ar)
-            ];            
+            ];
+            */          
 
             return response()->json(["property" => $property], Response::HTTP_OK);
         } catch (Exception $e) {
