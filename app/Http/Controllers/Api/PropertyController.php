@@ -74,6 +74,7 @@ class PropertyController extends Controller
                 $agentId = $agentId->id;
             }
 
+            /* Changes has been reverted
             File::updateOrCreate(
                 [
                     "ref_id" => $agentId,
@@ -86,6 +87,7 @@ class PropertyController extends Controller
                     "created_at" => now()
                 ]
             );
+            */
 
             $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
             if (!$propertyTypeId) {
@@ -184,6 +186,7 @@ class PropertyController extends Controller
                 }
                 $propertyFeatureIds = array_merge($propertyFeatureIds, $insertedIds);
 
+                /* Changes has been reverted
                 File::updateOrCreate(
                     [
                         "ref_id" => $propertyFeature->id,
@@ -196,6 +199,7 @@ class PropertyController extends Controller
                         "created_at" => now()
                     ]
                 );
+                */
             }
             $property->propertyFeatures()->attach($propertyFeatureIds);
 
@@ -290,6 +294,7 @@ class PropertyController extends Controller
                 $agentId = $agentId->id;
             }
 
+            /*
             File::updateOrCreate(
                 [
                     "ref_id" => $agentId,
@@ -302,6 +307,7 @@ class PropertyController extends Controller
                     "created_at" => now()
                 ]
             );
+            */
     
             $propertyTypeId = PropertyType::where('title_en', $validated['property_type']['title_en'])->first();
             if (!$propertyTypeId) {
@@ -425,6 +431,7 @@ class PropertyController extends Controller
 
                 $propertyFeatureIds = array_merge($propertyFeatureIds, $insertedIds);
 
+                /*
                 File::updateOrCreate(
                     [
                         "ref_id" => $propertyFeature->id,
@@ -437,6 +444,7 @@ class PropertyController extends Controller
                         "created_at" => now()
                     ]
                 );
+                */
             }
 
             $property->propertyFeatures()->sync($propertyFeatureIds);
