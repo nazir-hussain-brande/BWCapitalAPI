@@ -219,12 +219,14 @@ class PropertyController extends Controller
 
             DB::commit();
 
+            /*
             $response = [
                 "url_en" => url('/property/' . $property->slug_en),
                 "url_ar" => url('/property/' . $property->slug_ar)
-            ];            
+            ]; 
+            */           
 
-            return response()->json($response, Response::HTTP_CREATED);
+            return response()->json(["property" => $property], Response::HTTP_CREATED);
         } catch (Exception $e) {
 
             DB::rollBack();
@@ -471,7 +473,7 @@ class PropertyController extends Controller
                 "url_ar" => url('/property/' . $property->slug_ar)
             ];            
 
-            return response()->json($response, Response::HTTP_OK);
+            return response()->json(["property" => $property], Response::HTTP_OK);
         } catch (Exception $e) {
 
             DB::rollBack();
