@@ -16,8 +16,8 @@ class PropertyRequest extends FormRequest
         return [
             'title_en' => 'required|string|max:255',
             'title_ar' => 'required|string|max:255',
-            'slug_en' => 'required|string|max:255|exists:property,slug_en',
-            'slug_ar' => 'required|string|max:255|exists:property,slug_ar',
+            'slug_en' => 'required|string|max:255',
+            'slug_ar' => 'required|string|max:255',
             'price' => 'required|numeric',
             'bed' => 'required|integer|min:0',
             'bath' => 'required|integer|min:0',
