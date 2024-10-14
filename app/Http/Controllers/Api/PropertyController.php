@@ -235,8 +235,6 @@ class PropertyController extends Controller
         }
     }
 
-    
-
     /**
      * Display the specified property.
      *
