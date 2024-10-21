@@ -55,7 +55,7 @@ class PropertyRequest extends FormRequest
             'features_line_en' => 'nullable|string|max:255',
             'features_line_ar' => 'nullable|string|max:255',
             'location' => 'required|string|max:255',
-            'map_link' => 'nullable|url|max:255',
+            'map_link' => 'nullable|url|max:1000',
             'dld_permit_number' => 'nullable|string|max:255',
             'status' => 'required|integer|in:0,1',
         ];
