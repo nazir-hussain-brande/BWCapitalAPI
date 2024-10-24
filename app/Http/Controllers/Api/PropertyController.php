@@ -61,8 +61,10 @@ class PropertyController extends Controller
 
             $validated = $request->validated();
 
+            /*
             $slug_en = strtolower(str_replace(' ', '_', $validated['title_en']));
             $slug_ar = strtolower(str_replace(' ', '_', $validated['title_ar']));
+            */
 
             $agentId = Team::where('title_en', $validated['agent_id']['title_en'])->first();
             if (!$agentId) {
@@ -122,6 +124,12 @@ class PropertyController extends Controller
             } else {
                 $propertyForId = $propertyForId->id;
             }
+
+            $location_combined = $slug_en = strtolower(str_replace(' ', '_', $validated['location']));
+            $highlights_en_combined = $slug_en = strtolower(str_replace(' ', '_', $validated['highlights_en']));
+
+            $slug_en = implode('-', [$location_combined, $validated["size"], $highlights_en_combined]);
+            $slug_ar = strtolower(str_replace(' ', '_', $validated['title_ar']));
 
             $propertyData = array_merge($validated, [
                 'slug_en'       => $slug_en,
@@ -219,13 +227,6 @@ class PropertyController extends Controller
 
             DB::commit();
 
-            /*
-            $response = [
-                "url_en" => url('/property/' . $property->slug_en),
-                "url_ar" => url('/property/' . $property->slug_ar)
-            ]; 
-            */           
-
             return response()->json(["property" => $property], Response::HTTP_CREATED);
         } catch (Exception $e) {
 
@@ -279,8 +280,10 @@ class PropertyController extends Controller
         try {
             $validated = $request->validated();
 
+            /*
             $slug_en = strtolower(str_replace(' ', '_', $validated['title_en']));
             $slug_ar = strtolower(str_replace(' ', '_', $validated['title_ar']));
+            */
     
             $property = Property::findOrFail($id);
     
@@ -335,13 +338,19 @@ class PropertyController extends Controller
             } else {
                 $propertyForId = $propertyForId->id;
             }
-    
+            
+            $location_combined = $slug_en = strtolower(str_replace(' ', '_', $validated['location']));
+            $highlights_en_combined = $slug_en = strtolower(str_replace(' ', '_', $validated['highlights_en']));
+
+            $slug_en = implode('-', [$location_combined, $validated["size"], $highlights_en_combined]);
+            $slug_ar = strtolower(str_replace(' ', '_', $validated['title_ar']));
+
             $propertyData = array_merge($validated, [
+                'slug_en' => $slug_en,
+                'slug_ar' => $slug_ar,
                 'agent_id' => $agentId,
                 'property_type' => $propertyTypeId,
                 'property_for' => $propertyForId,
-                'slug_en' => $slug_en,
-                'slug_ar' => $slug_ar,
             ]);
     
             $property->update($propertyData);
