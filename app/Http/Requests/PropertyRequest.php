@@ -18,6 +18,7 @@ class PropertyRequest extends FormRequest
             'title_ar' => 'nullable|string|max:255',
             'slug_en' => 'required|string|max:255',
             'slug_ar' => 'nullable|string|max:255',
+            'seo_subject_line' => 'required|string|max:255',
             'price' => 'required|numeric',
             'bed' => 'nullable|integer|min:0',
             'bath' => 'nullable|integer|min:0',

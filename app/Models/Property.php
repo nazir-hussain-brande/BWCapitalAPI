@@ -20,6 +20,7 @@ class Property extends Model
         'title_ar',
         'slug_en',
         'slug_ar',
+        'seo_subject_line',
         'price',
         'bed',
         'bath',
